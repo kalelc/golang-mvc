@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/kalelc/golang-mvc/views"
+	"github.com/kalelc/golang-templates/views"
 
 	"github.com/gorilla/mux"
 )
