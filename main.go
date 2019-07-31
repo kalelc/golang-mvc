@@ -13,8 +13,8 @@ var homeView *views.View
 var contactView *views.View
 
 func main() {
-	homeView = views.NewView("views/home.gohtml")
-	contactView = views.NewView("views/contact.gohtml")
+	homeView = views.NewView("views/home.html")
+	contactView = views.NewView("views/contact.html")
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", home)
