@@ -19,5 +19,5 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 }
 
 type Users struct {
-	newView *views.View
+	NewView *views.View
 }
