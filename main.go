@@ -24,6 +24,7 @@ func main() {
 	r.HandleFunc("/", home)
 	r.HandleFunc("/contact", contact)
 	r.HandleFunc("/signup", usersC.New)
+	r.HandleFunc("/signup", usersC.Create).Methods("POST")
 
 	fmt.Println("localhost:3000")
 	http.ListenAndServe(":3000", r)
