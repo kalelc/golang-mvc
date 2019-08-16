@@ -36,6 +36,21 @@ func (us *UserService) Delete(id uint) error {
 	return us.db.Delete(&user).Error
 }
 
+func (us *UserService) AutoMigrate() error {
+	if err := us.db.AutoMigrate(&User{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (us *UserService) DestructiveReset() error {
+	err := us.db.DropTableIfExists(&User{}).Error
+	if err != nil {
+		return err
+	}
+	return us.AutoMigrate()
+}
+
 func (us *UserService) ByID(id uint) (*User, error) {
 	var user User
 	err := us.db.Where("id = ?", id).First(&user).Error
@@ -54,21 +69,6 @@ func (us *UserService) ByEmail(email string) (*User, error) {
 	db := us.db.Where("email = ?", email)
 	err := first(db, &user)
 	return &user, err
-}
-
-func (us *UserService) ByID(id uint) (*User, error) {
-	var user User
-	db := us.db.Where("id = ?", id)
-	err := first(db, &user)
-	if err != nil {
-		return nil, err
-	}
-	return &user, nil
-}
-
-func (us *UserService) DestructiveReset() {
-	us.db.DropTableIfExists(&User{})
-	us.db.AutoMigrate(&User{})
 }
 
 type User struct {

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/kalelc/golang-mvc/controllers"
+	"github.com/kalelc/golang-mvc/models"
 	"github.com/kalelc/golang-mvc/views"
 
 	"github.com/gorilla/mux"
@@ -15,10 +16,30 @@ var (
 	contactView *views.View
 )
 
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = ""
+	dbname   = "login_dev"
+)
+
 func main() {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
 	homeView = views.NewView("bootstrap", "views/home.html")
 	contactView = views.NewView("bootstrap", "views/contact.html")
-	usersC := controllers.NewUsers()
+
+	us, err := models.NewUserService(psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer us.Close()
+	us.DestructiveReset()
+
+	usersC := controllers.NewUsers(us)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", home).Methods("GET")
