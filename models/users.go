@@ -31,29 +31,6 @@ func (us *UserService) Close() error {
 	return us.db.Close()
 }
 
-func (us *UserService) Create(user *User) error {
-	pwBytes := []byte(user.Password + userPwPepper)
-	hashedBytes, err := bcrypt.GenerateFromPassword(pwBytes, bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-	user.PasswordHash = string(hashedBytes)
-	user.Password = ""
-	return us.db.Create(user).Error
-}
-
-func (us *UserService) Update(user *User) error {
-	return us.db.Save(user).Error
-}
-
-func (us *UserService) Delete(id uint) error {
-	if id == 0 {
-		return ErrInvalidID
-	}
-	user := User{Model: gorm.Model{ID: id}}
-	return us.db.Delete(&user).Error
-}
-
 func (us *UserService) AutoMigrate() error {
 	if err := us.db.AutoMigrate(&User{}).Error; err != nil {
 		return err
@@ -95,6 +72,29 @@ func first(db *gorm.DB, dst interface{}) error {
 		return ErrNotFound
 	}
 	return err
+}
+
+func (us *UserService) Create(user *User) error {
+	pwBytes := []byte(user.Password + userPwPepper)
+	hashedBytes, err := bcrypt.GenerateFromPassword(pwBytes, bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.PasswordHash = string(hashedBytes)
+	user.Password = ""
+	return us.db.Create(user).Error
+}
+
+func (us *UserService) Update(user *User) error {
+	return us.db.Save(user).Error
+}
+
+func (us *UserService) Delete(id uint) error {
+	if id == 0 {
+		return ErrInvalidID
+	}
+	user := User{Model: gorm.Model{ID: id}}
+	return us.db.Delete(&user).Error
 }
 
 func NewUserService(connectionInfo string) (*UserService, error) {
